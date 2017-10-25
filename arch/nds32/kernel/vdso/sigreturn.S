@@ -1,0 +1,36 @@
+/*
+ * Sigreturn trampoline for returning from a signal
+ *
+ * Copyright (C) 2012 ARM Limited
+ * Copyright (C) 2005-2017 Andes Technology Corporation
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 as
+ * published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Author: Will Deacon <will.deacon@arm.com>
+ */
+
+#include <linux/linkage.h>
+#include <asm/unistd.h>
+
+	.text
+
+ENTRY(__kernel_rt_sigreturn)
+	.cfi_startproc
+	movi $r15, __NR_rt_sigreturn
+	/*
+	 * The SWID of syscall should be __NR_rt_sigreturn to synchronize
+	 * the unwinding scheme in gcc
+	 */
+	syscall	__NR_rt_sigreturn
+	.cfi_endproc
+ENDPROC(__kernel_rt_sigreturn)
