@@ -1,0 +1,55 @@
+/dts-v1/;
+/ {
+	compatible = "nds32 ae3xx";
+	#address-cells = <1>;
+	#size-cells = <1>;
+	interrupt-parent = <&intc>;
+
+	chosen {
+		bootargs = "console=ttyS0,38400n8 earlyprintk=uart8250-32bit,0xf0300000 debug loglevel=7";
+	};
+
+	memory@0 {
+		device_type = "memory";
+		reg = <0x00000000 0x40000000>;
+	};
+
+	cpus {
+		cpu@0 {
+			device_type = "cpu";
+			compatible = "andestech,n13", "andestech,n15";
+		};
+	};
+
+	intc: interrupt-controller {
+		compatible = "andestech,ativic32";
+		#interrupt-cells = <2>;
+		interrupt-controller;
+	};
+
+	serial0: serial@f0300000 {
+		compatible = "andestech,uart16550", "ns16550a";
+		reg = <0xf0300000 0x1000>;
+		interrupts = <8 4>;
+		clock-frequency = <14745600>;
+		reg-shift = <2>;
+		reg-offset = <32>;
+		no-loopback-test = <1>;
+	};
+
+	timer0: timer@f0400000 {
+		compatible = "andestech,atcpit100";
+		reg = <0xf0400000 0x1000>;
+		interrupts = <2 4>;
+		clock-frequency = <30000000>;
+		cycle-count-offset = <0x38>;
+		cycle-count-down;
+	};
+
+	mac0: mac@e0100000 {
+		compatible = "andestech,atmac100";
+		reg = <0xe0100000 0x1000>;
+		interrupts = <18 4>;
+	};
+
+};
