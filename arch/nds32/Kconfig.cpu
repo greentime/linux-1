@@ -1,0 +1,100 @@
+comment "Processor Features"
+config HWZOL
+	bool "hardware zero overhead loop support"
+	default y
+	help
+	  A set of Zero-Overhead Loop mechanism is provided to reduce the
+	  instruction fetch and execution overhead of loop-control instructions.
+	  It will save 3 registers($LB, $LC, $LE) for context saving if say Y.
+	  You don't need to save these registers if you can make sure your user
+	  program doesn't use these registers.
+
+	  If unsure, say N.
+
+config CPU_CACHE_NONALIASING
+	bool "Non-aliasing cache"
+	help
+	  If this CPU is using VIPT data cache and its cache way size is larger
+	  than page size, say N. If it is using PIPT data cache, say Y.
+
+	  If unsure, say Y.
+
+choice
+	prompt "Paging -- page size "
+	default ANDES_PAGE_SIZE_4KB
+config  ANDES_PAGE_SIZE_4KB
+	bool "use 4KB page size"
+config  ANDES_PAGE_SIZE_8KB
+	bool "use 8KB page size"
+endchoice
+
+config CPU_ICACHE_DISABLE
+	bool "Disable I-Cache"
+	help
+	  Say Y here to disable the processor instruction cache. Unless
+	  you have a reason not to or are unsure, say N.
+
+config CPU_DCACHE_DISABLE
+	bool "Disable D-Cache"
+	help
+	  Say Y here to disable the processor data cache. Unless
+	  you have a reason not to or are unsure, say N.
+
+config CPU_DCACHE_WRITETHROUGH
+	bool "Force write through D-cache"
+	depends on !CPU_DCACHE_DISABLE
+	help
+	  Say Y here to use the data cache in writethrough mode. Unless you
+	  specifically require this or are unsure, say N.
+
+config WBNA
+	bool "WBNA"
+	default n
+	help
+	  Say Y here to enable write-back memory with no-write-allocation policy.
+
+config ALIGNMENT_TRAP
+	tristate "Kernel support unaligned access handling"
+	default y
+	help
+	  Andes processors cannot fetch/store information which is not
+	  naturally aligned on the bus, i.e., a 4 byte fetch must start at an
+	  address divisible by 4. On 32-bit Andes processors, these non-aligned
+	  fetch/store instructions will be emulated in software if you say
+	  here, which has a severe performance impact. This is necessary for
+	  correct operation of some network protocols. With an IP-only
+	  configuration it is safe to say N, otherwise say Y.
+
+config HIGHMEM
+	bool "High Memory Support"
+	depends on MMU && CPU_CACHE_NONALIASING
+	help
+	  The address space of Andes processors is only 4 Gigabytes large
+	  and it has to accommodate user address space, kernel address
+	  space as well as some memory mapped IO. That means that, if you
+	  have a large amount of physical memory and/or IO, not all of the
+	  memory can be "permanently mapped" by the kernel. The physical
+	  memory that is not permanently mapped is called "high memory".
+
+	  Depending on the selected kernel/user memory split, minimum
+	  vmalloc space and actual amount of RAM, you may not need this
+	  option which should result in a slightly faster kernel.
+
+	  If unsure, say N.
+
+config CACHE_L2
+	bool "Support L2 cache"
+        default y
+	help
+	  Say Y here to enable L2 cache if your SoC are integrated with L2CC.
+	  If unsure, say N.
+
+menu "Memory configuration"
+
+config MEMORY_START
+	hex "Physical memory start address"
+	default "0x00000000"
+	help
+	  Physical memory start address, you may modify it if it is porting to
+	  a new SoC with different start address.
+endmenu
