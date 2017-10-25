@@ -1,0 +1,70 @@
+/dts-v1/;
+/ {
+	compatible = "andestech,ag101p";
+	#address-cells = <1>;
+	#size-cells = <1>;
+	interrupt-parent = <&intc>;
+
+	chosen {
+		stdout-path = &serial0;
+	};
+
+	memory@0 {
+		device_type = "memory";
+		reg = <0x00000000 0x40000000>;
+	};
+
+	cpus {
+		#address-cells = <1>;
+		#size-cells = <0>;
+		cpu@0 {
+			device_type = "cpu";
+			compatible = "andestech,n13", "andestech,nds32v3";
+			reg = <0x0>;
+			clock-frequency = <60000000>;
+		};
+	};
+
+	clk_pll: ref_30mhz {
+		#clock-cells = <0>;
+		compatible = "fixed-clock";
+		clock-frequency = <30000000>;
+	};
+
+	intc: interrupt-controller {
+		compatible = "andestech,ativic32";
+		#interrupt-cells = <1>;
+		interrupt-controller;
+	};
+
+	serial0: serial@99600000 {
+		compatible = "andestech,uart16550", "ns16550a";
+		reg = <0x99600000 0x1000>;
+		interrupts = <7>;
+		clock-frequency = <14745600>;
+		reg-shift = <2>;
+		no-loopback-test = <1>;
+	};
+
+	timer0: timer@98400000 {
+		compatible = "andestech,atftmr010";
+		reg = <0x98400000 0x1000>;
+		interrupts = <19>;
+		clocks = <&clk_pll>;
+		clock-names = "apb_pclk";
+		cycle-count-offset = <0x20>;
+	};
+
+	mac0: mac@90900000 {
+		compatible = "andestech,atmac100";
+		reg = <0x90900000 0x1000>;
+		interrupts = <25>;
+	};
+
+	L2: l2-cache {
+		compatible = "andestech,atl2c";
+		reg = <0x90f00000 0x1000>;
+		cache-unified;
+		cache-level = <2>;
+	};
+};
