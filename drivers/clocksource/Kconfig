@@ -615,4 +615,10 @@ config CLKSRC_ST_LPC
 	  Enable this option to use the Low Power controller timer
 	  as clocksource.
 
+config CLKSRC_ATCPIT100
+	bool "Clocksource for AE3XX platform"
+        depends on GENERIC_CLOCKEVENTS && HAS_IOMEM
+	help
+	  This option enables support for the Andestech AE3XX platform timers.
+
 endmenu
